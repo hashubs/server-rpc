@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { error } from "../utils/response.js";
-import { getSolanaRpcRotator } from "../solana/rpc.js";
-import { Cluster } from "../solana/types.js";
+import { error } from "../utils/response";
+import { getSolanaRpcRotator } from "../solana/rpc";
+import { Cluster } from "../solana/types";
 
 export const proxy = new Hono();
 

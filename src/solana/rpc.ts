@@ -1,5 +1,5 @@
-import { RpcRotator } from "../utils/rpc.js";
-import { Cluster } from "./types.js";
+import { RpcRotator } from "../utils/rpc";
+import { Cluster } from "./types";
 
 const TATUM_API_KEYS = [
   "t-6544d31fe55e20001c0bda90-5e5e9243bbd640ea81ab734c",

@@ -1,6 +1,6 @@
 import { Connection } from "@solana/web3.js";
-import { Cluster } from "./types.js";
-import { getSolanaRpcRotator } from "./rpc.js";
+import { Cluster } from "./types";
+import { getSolanaRpcRotator } from "./rpc";
 
 const connections: Record<string, Connection> = {};
 

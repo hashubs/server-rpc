@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
-import { wallet } from './routes/wallet.js';
-import { proxy } from './routes/proxy.js';
+import { wallet } from './routes/wallet';
+import { proxy } from './routes/proxy';
 
 const app = new Hono();
 

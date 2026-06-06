@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
-import { success, error } from "../utils/response.js";
-import { getConnection } from "../solana/client.js";
-import { getWalletAssets } from "../solana/assets.js";
-import { Cluster } from "../solana/types.js";
+import { success, error } from "../utils/response";
+import { getConnection } from "../solana/client";
+import { getWalletAssets } from "../solana/assets";
+import { Cluster } from "../solana/types";
 
 export const wallet = new Hono();
 

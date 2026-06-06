@@ -1,6 +1,6 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { Asset } from "./types.js";
-import { getMetadataPda, parseMetadataAccount } from "./metadata.js";
+import { Asset } from "./types";
+import { getMetadataPda, parseMetadataAccount } from "./metadata";
 
 export async function getWalletAssets(connection: Connection, walletAddress: string): Promise<Asset[]> {
   const owner = new PublicKey(walletAddress);
