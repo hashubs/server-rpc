@@ -1,13 +1,16 @@
 export type Cluster = "mainnet" | "testnet" | "devnet";
 
 export interface Asset {
-  type: "native" | "spl";
+  type: "native" | "spl-token";
   mint: string;
   symbol: string | null;
   name: string | null;
   image: string | null;
   amount: number;
   decimals: number;
+  verified?: boolean;
+  usdPrice?: number;
+  usdChange?: number;
 }
 
 export interface Metadata {

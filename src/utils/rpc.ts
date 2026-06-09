@@ -19,7 +19,10 @@ export class RpcRotator {
     this.config = config;
   }
 
-  async forward(body: string | null, method: string = "POST"): Promise<Response> {
+  async forward(
+    body: string | null,
+    method: string = "POST",
+  ): Promise<Response> {
     const rpcList = this.config.urls;
     if (rpcList.length === 0) {
       throw new Error("No RPC URLs configured");
@@ -32,7 +35,7 @@ export class RpcRotator {
       const target = rpcList[(startRpc + i) % rpcList.length];
       const isSpecial = this.config.specialUrls?.has(target) ?? false;
       const apiKeys = this.config.apiKeys ?? [];
-      const attempts = (isSpecial && apiKeys.length > 0) ? apiKeys.length : 1;
+      const attempts = isSpecial && apiKeys.length > 0 ? apiKeys.length : 1;
 
       for (let k = 0; k < attempts; k++) {
         const headers: Record<string, string> = {
@@ -46,8 +49,8 @@ export class RpcRotator {
 
         try {
           const reqBodyParsed = body ? JSON.parse(body) : {};
-          const methodName = Array.isArray(reqBodyParsed) 
-            ? `Batch(${reqBodyParsed.length})` 
+          const methodName = Array.isArray(reqBodyParsed)
+            ? `Batch(${reqBodyParsed.length})`
             : reqBodyParsed.method || method;
 
           console.log(`[RPC ->] Target: ${target} | Method: ${methodName}`);
@@ -59,43 +62,49 @@ export class RpcRotator {
           });
 
           let isProviderError = false;
-          // Cek kalau HTTP status 4xx/5xx yang harus di-retry
-          if (response.status === 429 || response.status === 401 || response.status === 403 || response.status >= 500) {
+          if (
+            response.status === 429 ||
+            response.status === 401 ||
+            response.status === 403 ||
+            response.status >= 500
+          ) {
             isProviderError = true;
           }
 
-          // Beberapa provider (seperti Tatum) mengembalikan HTTP 200 tapi isinya JSON RPC Error untuk pembatasan fitur (paid plans)
           if (!isProviderError && response.status === 200) {
             try {
               const cloned = response.clone();
               const data = await cloned.json();
-              const checkError = (err: any) => err && (err.code === -16401 || (err.message && err.message.toLowerCase().includes("paid plan")));
-              
+              const checkError = (err: any) =>
+                err &&
+                (err.code === -16401 ||
+                  (err.message &&
+                    err.message.toLowerCase().includes("paid plan")));
+
               if (Array.isArray(data)) {
-                if (data.some(d => checkError(d.error))) isProviderError = true;
+                if (data.some((d) => checkError(d.error)))
+                  isProviderError = true;
               } else if (data && data.error) {
                 if (checkError(data.error)) isProviderError = true;
               }
-            } catch (e) {
-              // Abaikan error parsing JSON
-            }
+            } catch (e) {}
           }
 
           if (!isProviderError) {
             console.log(`[RPC <-] Success from: ${target}`);
-            // Sukses — geser key untuk request berikutnya jika ini special URL
             if (isSpecial && apiKeys.length > 0) {
               this.keyIndex = (this.keyIndex + k + 1) % apiKeys.length;
             }
             return response;
           }
 
-          console.log(`[RPC !] Provider Limit/Error from: ${target} (HTTP ${response.status}). Retrying...`);
+          console.log(
+            `[RPC !] Provider Limit/Error from: ${target} (HTTP ${response.status}). Retrying...`,
+          );
           lastError = `${target} status ${response.status} (Provider Error)${
             isSpecial ? ` (key ${k + 1}/${attempts})` : ""
           }`;
 
-          // 5xx di special service (Tatum) = server down, tidak perlu coba key lain
           if (response.status >= 500) break;
         } catch (err) {
           lastError = `${target} failed: ${err instanceof Error ? err.message : "unknown"}`;

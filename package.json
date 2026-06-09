@@ -7,7 +7,10 @@
   },
   "dependencies": {
     "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
+    "@noble/curves": "^2.2.0",
+    "@noble/hashes": "^2.2.0",
     "@solana/web3.js": "^1.98.4",
+    "bs58": "^6.0.0",
     "hono": "^4.12.23",
     "zod": "^4.4.3"
   },
